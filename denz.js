@@ -261,8 +261,8 @@ try {
 		const isGroup = from.endsWith('@g.us')
 		const sender = mek.key.fromMe ? denz.user.jid : isGroup ? mek.participant : mek.key.remoteJid
 		const senderNumber = sender.split("@")[0] 
-		const conts = mek.key.fromMe ? denz.user.jid : denz.contacts[mek.sender]
-        const pushname = mek.key.fromMe ? denz.user.name : !conts ? '-' : conts.notify || conts.vname || conts.name || '-'   
+		const conts = mek.key.fromMe ? denz.user.jid : denz.contacts[sender] || { notify: jid.replace(/@.+/, '') }
+        const pushname = mek.key.fromMe ? denz.user.name : conts.notify || conts.vname || conts.name || '-'
 		const totalchat = await denz.chats.all()
 		const groupMetadata = isGroup ? await denz.groupMetadata(from) : ''
 		const groupName = isGroup ? groupMetadata.subject : ''
@@ -279,7 +279,6 @@ try {
 		const isAuto = isGroup ? autosticker.includes(from) : false
 		const isMuted = isGroup ? mute.includes(from) : false
 		const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
-		const isButton = (type == 'buttonsResponseMessage') ? mek.message.buttonsResponseMessage.selectedDisplayText : ''
 		const isUrl = (url) => {
 		return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%.+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%+.~#?&/=]*)/, 'gi'))
 		}
@@ -674,7 +673,7 @@ denz.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
 				return Math.floor(teks)
 		}
 		const sendMess = (hehe, teks) => {
-			denz.sendMessage(hehe, teks, text, { quoted: ftrol, contextInfo: { forwardingScore: 508, isForwarded: true}})
+			denz.sendMessage(hehe, teks, text, { quoted: tok, contextInfo: { forwardingScore: 508, isForwarded: true}})
 		}
 		const mentions = (teks, memberr, id) => {
 			(id == null || id == undefined || id == false) ? denz.sendMessage(from, teks.trim(), extendedText, { contextInfo: { "mentionedJid": memberr } }) : denz.sendMessage(from, teks.trim(), extendedText, { quoted: mek, contextInfo: { "mentionedJid": memberr } })
@@ -827,7 +826,7 @@ await denz.modifyChat(m.chat, 'delete', {
 }
 if (!isGroup && !isCmd && !command && !mek.key.fromMe && !autorespon) {
 numd = await fetchJson(`https://api.telnyx.com/anonymous/v2/number_lookup/${senderNumber}`, {method: 'get'})
-	simi = await fetchJson(`https://api.simsimi.net/v2/?text=${cmd}&lc=${numd.data.country_code}`)
+	simi = await fetchJson(`https://api.simsimi.net/v1/?lang=${numd.data.country_code}&cf=false&text=${cmd}`)
                      sami = simi.success
                         denz.sendMessage(from, `_${sami}_`, text, {thumbnail: ofrply, sendEphemeral: true, quoted:mek, contextInfo : {forwardingScore: 508, isForwarded: true}})
                       }
@@ -893,7 +892,7 @@ denz.updatePresence(from, Presence.recording)
         reply(su)
 				}
         switch (command) {
-        	case 'menu':
+        case 'menu':
         case 'help':
         stod = `${sender}`
        stst = await denz.getStatus(`${sender.split('@')[0]}@c.us`)
@@ -924,10 +923,9 @@ denz.updatePresence(from, Presence.recording)
 ├ _Info Nomor : ${num.data.country_code} - ${num.data.carrier.type} - ${num.data.carrier.name}_
 │
 └───「 \`\`\`${NamaBot}\`\`\` 」`
-sendButLocation(from, `${menu}`, "*_© Dcode Denpa_*", {jpegThumbnail:ofrply,name:""}, [{buttonId:`command`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {contextInfo: { mentionedJid: [dtod,otod,stod]}})
+sendButLocation(from, `${menu}`, "*_© Dcode Denpa_*", {jpegThumbnail:ofrply}, [{buttonId:`${prefix}command`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`${prefix}owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`${prefix}script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {contextInfo: { mentionedJid: [dtod,otod,stod]}})
 break
-case 'command':
- stod = `${sender}`
+case 'hana':
  listMsg = {
  buttonText: 'LIST MENU',
  footerText: '*_© Dcode Denpa_*',
@@ -1021,7 +1019,7 @@ menu = `❏ 「 \`\`\`MENU OWNER\`\`\` 」
 ├ ${prefix}exif [ _nama|author_ ]
 ├ ${prefix}setprofile [ _reply image_ ]
 ├ ${prefix}setname [ _teks_ ]
-├ ${prefix}setprefix [ _multi/nopref/prefix_ ]
+├ ${prefix}setprefix [ _multi/nopref_ ]
 ├ ${prefix}setbio [ _teks_ ]
 ├ ${prefix}addsticker [ _nama_ ]
 ├ ${prefix}delsticker [ _nama_ ]
@@ -1901,7 +1899,7 @@ case 'matrix':
 					anu = await denz.chats.all()
 					denz.setMaxListeners(10)
 					for (let _ of anu) {
-						denz.clearMessage(_.jid)
+						denz.deleteChat(_.jid)
 					}
 					reply('Sukses membersihkan semua pesan')
 					break
@@ -2051,7 +2049,7 @@ case 'tts':
 					if (!arg) return reply(`Penggunaan ${prefix}spam teks|jumlah`)
 				argzi = arg.split("|")
 				if (!argzi) return reply(`Penggunaan ${prefix}spam teks|jumlah`)
-				if (Number(argzi[1]) >= 50) return reply('Kebanyakan!')
+				if (Number(argzi[1]) >= 100) return reply('Kebanyakan!')
 				if (isNaN(argzi[1])) return reply(`harus berupa angka`)
 				for (let i = 0; i < argzi[1]; i++){
 					denz.sendMessage(from, argzi[0], MessageType.text)
@@ -2308,8 +2306,7 @@ break
 				break
 				case 'kontag':
 				if (!isGroup) return reply(mess.only.group)
-				if (!isGroupAdmins) return reply(mess.only.admin)
-                argzi = arg.split('|')
+				argzi = arg.split('|')
 				if (!argzi) return reply(`Penggunaan ${prefix}kontak @tag|nama`)
 				if (mek.message.extendedTextMessage != undefined){
                     		mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
@@ -2346,6 +2343,7 @@ break
             denz.sendMessage(from, pict, image, {quoted: mek})
             break
 				case 'chat':
+				if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
 			if (args[0].startsWith('08')) return reply('Awali nomor dengan 62')
             if (args[0].startsWith('+62')) return reply('Awali nomor dengan 62')
 			if (args.length < 1) return reply(`Penggunaan ${prefix}chat 62xnxx|teks`)
@@ -2389,8 +2387,7 @@ reply('Sukses bergabung dalam group')
 break
 				case 'totag':
 			if (!isGroup) return reply(mess.only.group)
-			if (!isGroupAdmins) return reply(mess.only.admin)
-            if ((isMedia && !mek.message.videoMessage || isQuotedSticker) && args.length == 0) {
+			if ((isMedia && !mek.message.videoMessage || isQuotedSticker) && args.length == 0) {
             encmediau = isQuotedSticker ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
             file = await denz.downloadAndSaveMediaMessage(encmediau, filename = getRandom())
             value = args.join(" ")
@@ -2625,9 +2622,7 @@ var nn = body.slice(9)
 				denz.sendMessage(from, cs[2], MessageType.text, target)
 				break
               case 'hacked':
-              if (!isGroup) return reply(mess.only.group)
-              if (!isGroupAdmins) return reply(mess.only.admin)
-              if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+              if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
               if (args.length < 1) return reply('Teksnya?')
               reply('Otw Hack')
                 tessgc = await getBuffer(`https://i.ibb.co/m4Qx3JG/20210319-204838.jpg`)
@@ -2638,19 +2633,6 @@ var nn = body.slice(9)
                 denz.groupUpdateDescription(from, `_${pushname} telah meretas grup ini_`)             
                 await sleep(1000)
                 denz.sendMessage(from, 'Succes Hacked', text, {quoted: mek})
-					break
-					case 'hack':
-					if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
-              if (!isGroup) return reply(mess.only.group)
-              if (!isGroupAdmins) return reply(mess.only.admin)
-              if (!isBotGroupAdmins) return reply(mess.only.Badmin)
-              sendBug(from)
-              denz.groupUpdateSubject(from, `HACKED BY DENZ`)
-                denz.groupUpdateDescription(from, `_${me.jid}_`)
-             denz.updateProfilePicture(from, fs.readFileSync('./media/image/me.jpg'))
-                denz.sendMessage(from, 'Succes!', text, {quoted: mek})
-                await sleep(3000)
-                denz.groupLeave(from)
 					break
 					case 'bugpc2':
 if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
@@ -2953,7 +2935,7 @@ break
                                     axios.get(`https://tinyurl.com/api-create.php?url=${dl_link}`)
                                     .then(async (a) => {
                                     if (Number(filesize) >= 30000) return sendMediaURL(from, thumb, `❏ *PLAYmp3*\n\n❏ *Title* : ${title}\n❏ *Ext* : MP3\n*Filesize* : ${filesizeF}\n*Link* : ${a.data}\n\n_Maaf durasi melebihi batas maksimal, Silahkan klik link diatas_`)
-                                    sendFileFromUrl(dl_link, document, {mimetype: 'audio/mp3', filename: `${title}.mp3`, quoted: mek, contextInfo: { forwardingScore: 508, isForwarded: true, externalAdReply:{title:title,body:"",mediaType:"2",thumbnail:getBuffer(thumb),mediaUrl:"https://youtu.be/Ejl9sLbgc1A"}}}).catch(() => reply(mess.error.api))
+                                    sendFileFromUrl(dl_link, document, {mimetype: 'audio/mp3', filename: `${title}.mp3`, quoted: mek, contextInfo: { forwardingScore: 508, isForwarded: true, externalAdReply:{title:title,body:"",mediaType:"2",thumbnail:getBuffer(thumb),mediaUrl:`${body.slice(7)}`}}}).catch(() => reply(mess.error.api))
                                     })
                                 })
                             } catch (err) {
@@ -2972,7 +2954,7 @@ break
                                     axios.get(`https://tinyurl.com/api-create.php?url=${dl_link}`)
                                     .then(async (a) => {
                                     if (Number(filesize) >= 30000) return sendMediaURL(from, thumb, `❏ *PLAYmp4*\n\n❏ *Title* : ${title}\n❏ *Ext* : MP4\n*Filesize* : ${filesizeF}\n*Link* : ${a.data}\n\n_Maaf durasi melebihi batas maksimal, Silahkan klik link diatas_`)
-                                    sendFileFromUrl(dl_link, document, {mimetype: 'video/mp4', filename: `${title}.mp4`, quoted: mek, contextInfo: { forwardingScore: 508, isForwarded: true, externalAdReply:{title:title,body:"",mediaType:"2",thumbnail:getBuffer(thumb),mediaUrl:"https://youtu.be/Ejl9sLbgc1A"}}}).catch(() => reply(mess.error.api))
+                                    sendFileFromUrl(dl_link, document, {mimetype: 'video/mp4', filename: `${title}.mp4`, quoted: mek, contextInfo: { forwardingScore: 508, isForwarded: true, externalAdReply:{title:title,body:"",mediaType:"2",thumbnail:getBuffer(thumb),mediaUrl:`${body.slice(7)}`}}}).catch(() => reply(mess.error.api))
                                     })
                                 })
                             } catch (err) {
@@ -3352,6 +3334,312 @@ break
                 deleteCommands(body.slice(11), commandsDB)
 				reply(`Sukses menghapus respon ${body.slice(11)}`)
 				break
+case 'smeme': 
+              if (!isGroup) return reply('Khusus Group')
+					reply(mess.wait) 
+					arg = args.join(' ');
+					top = arg.split('|')[0]
+					bottom = arg.split('|')[1]
+					var imgbb = require('imgbb-uploader')
+					if ((isMedia && !mek.message.videoMessage || isQuotedImage || isQuotedSticker) && args.length > 0) {
+					ger = isQuotedImage || isQuotedSticker ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek 
+					owgi = await  denz.downloadAndSaveMediaMessage(ger)
+					anu = await imgbb("cedeb44b8d204947a6833ca1412ca77d", owgi)
+					teks = `${anu.display_url}`
+					ranp = getRandom('.gif')
+					rano = getRandom('.webp')
+					anu1 = `https://api.memegen.link/images/custom/${top}/${bottom}.png?background=${teks}`
+					sendStickerUrl(from, `${anu1}`)
+					} else {
+					reply('Gunakan foto/stiker!')
+					}
+					break
+case 'bugreport':
+if (args.length < 1) return reply(`Ketik ${prefix}bugreport [fiturnya] [Error Nya Gimana]`) 
+teks = args.join(' ')
+reply('Terima Kasih Telah Melaporkan Bug Pada Owner, Jika Itu Sekedar Iseng Maka Akan Di Ban Oleh Bot!')
+denz.sendMessage('6289626029135@s.whatsapp.net',`*INFO DARI PENGGUNA*\n*Bug Report:* ${teks}`, text)
+break
+case 'request':
+if (args.length < 1) return reply(`Ketik ${prefix}request [fiturnya] [Error Nya Gimana]`) 
+teks = args.join(' ')
+reply('Terima Kasih Telah Request Fitur Baru Pada Owner, Jika Itu Sekedar Iseng Maka Akan Di Ban Oleh Bot!')
+denz.sendMessage('6289626029135@s.whatsapp.net',`*INFO DARI PENGGUNA*\n*Request Fitur:* ${teks}`, text)
+break
+case 'blocklist':
+teks = 'This is list of blocked number :\n'
+for (let block of blocked) {
+teks += `~> @${block.split('@')[0]}\n`
+}
+teks += `Total : ${blocked.length}`
+denz.sendMessage(from, teks.trim(), extendedText, {quoted: msg, contextInfo: {"mentionedJid": blocked}})
+break 
+case 'meadmin':
+if (!isGroup) return reply('Khusus Group')
+if (!isOwner) return
+if (isGroupAdmins) return reply('Lu Dah Admin Om')
+if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+denz.groupMakeAdmin(from, [sender])
+reply('Sukses')
+break
+case 'jadian':
+if (!isGroup) return reply('Khusus Group')
+              jds = []
+              jdii = groupMembers
+              koss = groupMembers
+              akuu = jdii[Math.floor(Math.random() * jdii.length)]
+              diaa = koss[Math.floor(Math.random() * koss.length)]
+              teks = `Ciee.. yang lagi jadian @${akuu.jid.split('@')[0]}  ( ) @${diaa.jid.split('@')[0]} `
+              jds.push(akuu.jid)
+              jds.push(diaa.jid)
+              mentions(teks, jds, true)
+              break
+       case 'cantik':
+       if (!isGroup) return reply('Khusus Group')
+              membr = []
+              const mes = groupMembers
+              const msk = groupMembers
+              const siaps = mes[Math.floor(Math.random() * mes.length)]
+              const sips = pushname[Math.floor(Math.random() * msk.length)]
+              teks = `*Yang Paling Cantik Disini Adalah :* @${siaps.jid.split('@')[0]}`
+              membr.push(siaps.jid)
+              mentions(teks, membr, true)
+              break
+       case 'ganteng':
+       if (!isGroup) return reply('Khusus Group')
+              membr = []
+              const nus = groupMembers
+              const msl = groupMembers
+              const siapss = nus[Math.floor(Math.random() * nus.length)]
+              const sipss = pushname[Math.floor(Math.random() * msl.length)]
+              teks = `*Masih Gantengan Owner Gua :* @${siapss.jid.split('@')[0]}`
+              membr.push(siapss.jid)
+              mentions(teks, membr, true)
+              break
+       case 'babi':
+       if (!isGroup) return reply('Khusus Group')
+              membr = []
+              const meg = groupMembers
+              const mge = groupMembers
+              const ba = meg[Math.floor(Math.random() * meg.length)]
+              const bi = pushname[Math.floor(Math.random() * mge.length)]
+              teks = `*Yang Paling Babi Disini Adalah :* @${ba.jid.split('@')[0]}`
+              membr.push(ba.jid)
+              mentions(teks, membr, true)
+              break
+       case 'beban':
+       if (!isGroup) return reply('Khusus Group')
+              membr = []
+              const nge = groupMembers
+              const tod = groupMembers
+              const beb = nge[Math.floor(Math.random() * nge.length)]
+              const an = pushname[Math.floor(Math.random() * tod.length)]
+              teks = `*Yang Paling Beban Disini Adalah :* @${beb.jid.split('@')[0]}`
+              membr.push(beb.jid)
+              mentions(teks, membr, true)
+              break
+       case 'cekwatak':
+       if (!isGroup) return reply('Khusus Group')
+              var namao = pushname
+              var prfx = await denz.getProfilePicture(sender)
+              const watak = ['top deh pokoknya','penyayang','pemurah','Pemarah','Pemaaf','Penurut','Baik','baperan','Baik-Hati','penyabar','UwU','Suka Membantu']
+              const wtk = watak[Math.floor(Math.random() * (watak.length))]
+              const ratenyaasu = ['100%','95%','90%','85%','80%','75%','70%','65%','60%','55%','50%','45%','40%','35%','30%','25%','20%','15%','10%','5%']
+              const akhlak = ratenyaasu[Math.floor(Math.random() * (ratenyaasu.length))]
+              const sifat = ['Penolong','Suka Membantu','Saling Menolong','Perhatian','Ngak Cuek','Romantis','Dermawan','Cool','Peduli Kepada Sesama','Suka Berkata Kasar']
+              const sft = sifat[Math.floor(Math.random() * (sifat.length))]
+              const hobby = ['Memasak','Membantu Atok','Mabar','Nobar','Coli','Colkyy','Sosmedtan','Membantu Orang lain','Nonton Anime','Nonton Drakor','Naik Motor','Nyanyi','Menari','Bertumbuk','Menggambar','Foto fotoan Ga jelas','Maen Game','Berbicara Sendiri']
+              const hby = hobby[Math.floor(Math.random() * (hobby.length))]
+              const kelebihan = ['Soleh dan Soleha','Pintar','Rajin','Teladan']
+              const klbh = kelebihan[Math.floor(Math.random() * (kelebihan.length))]
+              const tipe = ['cool','idaman','Alami','Keren','Ideal','Dia Bamget','normal','elite','epic','Legend']
+              const typo = tipe[Math.floor(Math.random() * (tipe.length))]
+              await reply(`[ INTROGASI SUKSES ]\n\n[Nama]:${namao}\n\n[Watak]:${wtk}\n\n[Akhlak]:${akhlak}\n\n[Sifat]:${sft}\n\n[Hobby]:${hby}\n\n[Tipe]:${typo}\n\n[Kelebihan]:${klbh}\n\nNote\n\n_ini hanya main main_`)
+              break
+                     case 'cekmati':
+                     if (!isGroup) return reply(mess.only.group)
+              if (!q) return reply(mess.wrongFormat)
+              predea = await axios.get(`https://api.agify.io/?name=${q}`)
+              reply(`Nama : ${predea.data.name}\n*Mati Pada Umur :* ${predea.data.age} Tahun.\n\n_Cepet Cepet Tobat Bro Soalnya Mati ga ada yang tau_`)
+              break
+case 'kickall': // Anti Banned
+if (!isGroup) return reply('Khusus Group')
+              for (let i of groupMembers) {
+              await kickMember(from, [i.jid])
+}
+              break
+       case 'leave':
+       if (!isOwner) return 
+              if (!isGroup) return reply('Khusus Group')
+              setTimeout( () => {
+              denz.groupLeave(from) 
+              }, 2000)
+              setTimeout( () => {
+              reply('Byee...')
+              }, 0)
+              break
+case 'tagall':
+              if (!isGroup) return reply(mess.only.group)
+              let arr = [];
+              let txti = `*[ TAG ALL ]*\n\n${q ? q : ''}\n\n`
+              for (let i of groupMembers){
+              txti += `=> @${i.jid.split("@")[0]}\n`
+              arr.push(i.jid)
+}
+              mentions(txti, arr, true)
+              break
+case 'loliv':
+       case 'lolivid':
+       case 'lolivideo':
+       if (!isGroup) return reply('Khusus Group')
+              reply(mess.wait)
+              anu = await fetchText('https://raw.githubusercontent.com/AlvioAdjiJanuar/random/main/loli.txt')
+             .then(async (body) => {
+              anu = body.split('\n')
+              anu = anu[Math.floor(Math.random() * anu.length)]
+              sendMediaURL(from, anu)
+})
+             .catch(async (err) => {
+              console.error(err)
+              reply(`${err}`)
+})
+              break
+       case 'nekopoi3d':
+       case '3dnekopoi':
+       case '3dnekopoilast':
+       if (!isGroup) return reply('Khusus Group')
+              reply(mess.wait)
+              try {
+              bsangee = await axios.get(`https://api.vhtear.com/neko3d&apikey=ZetsuBot`)
+              bsangee2 = bsangee.data
+              keluarplay = `*List update 3D JAV*\n`
+              for (let i = 0; i < bsangee2.result.length; i++) {
+              keluarplay += `\n\n\n*Judul* : ${bsangee2.result[i].title}\n*Deskripsi* : ${bsangee2.result[i].description}\n*Link* : ${bsangee2.result[i].url}\n`
+}
+              reply(keluarplay) 
+              } catch (err) {
+              console.log(err)
+              reply('error!')
+}
+               break
+        case 'nekopoicosplay':
+        case 'cosplaynekopoi':
+        if (!isGroup) return reply('Khusus Group')
+               try {
+               reply(mess.wait)
+               bsangbe = await axios.get(`https://api.vhtear.com/nekojavcosplay&apikey=ZetsuBot`)
+               bsangbe2 = bsangbe.data
+               keluarplay = `*List update Cosplay JAV*\n`
+               for (let i = 0; i < bsangbe2.result.length; i++) {
+               keluarplay += `\n\n\n*Judul* : ${bsangbe2.result[i].title}\n*Deskripsi* : ${bsangbe2.result[i].detail}\n*Link* : ${bsangbe2.result[i].url}\n`
+}
+               reply(keluarplay)
+               } catch (err) {
+               console.log(err)
+}
+               break
+case 'map':
+			    if (!isGroup) return reply('Khusus Group')
+                anu = await fetchJson(`https://mnazria.herokuapp.com/api/maps?search=${body.slice(5)}`, {method: 'get'})
+                kontol = await getBuffer(anu.gambar)
+                denz.sendMessage(from, kontol, image, {quoted: ftoko, caption: `${body.slice(5)}`})
+					break
+                case 'kbbi':
+                if (!isGroup) return reply('Khusus Group')
+					if (args.length < 1) return reply('Apa yang mau dicari um?')
+					anu = await fetchJson(`https://mnazria.herokuapp.com/api/kbbi?search=${body.slice(6)}`, {method: 'get'})
+					reply('Menurut Kbbi:\n\n'+anu.result)
+					break
+                case 'bokep':
+				denz.updatePresence(from, Presence.composing)
+				 data = fs.readFileSync('./src/18.js');
+                 jsonData = JSON.parse(data);
+                 randIndex = Math.floor(Math.random() * jsonData.length);
+                 randKey = jsonData[randIndex];
+                 randBokep = await getBuffer(randKey.image)
+                 randTeks = randKey.teks
+                 denz.sendMessage(from, randBopkep, image, {quoted: ftoko, caption: randTeks})
+				break       
+				case 'jalantikus':
+                //[â—] case by DappaGanz
+				if (args.length < 1) return reply(`apa yang mau dicari ngab?\ncontoh ${prefix + command} whatsapp`)
+				reply(aml.wait) 
+				dpganzz = args.join('  ')
+				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/jalantikus?q=${dpganzz}&apikey=RJJKCXSU`)
+				teks = '=================\n'
+				for (let i of anu.result) {
+				teks += `Title : ${i.title}\nImage : ${i.img}\nUrl : ${i.url}\n=================\n`
+				}
+				reply(teks.trim())
+				break
+case 'cersex':
+				reply(aml.wait) 
+				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/cersex?apikey=RJJKCXSU`) 
+				kontoler = await getBufferer(anu.gambar)
+				sex = `[ CERITA SEX ]\n\n\nCerita : ${anu.result}`
+				denz.sendMessage(from, kontoler, image, {quoted: ftoko, caption: sex})
+				await limitAdd(sender)
+				break
+				case 'cersexsearch':
+                judul = args.join('  ')
+				reply(aml.wait) 
+				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/cersex-search?q=${judul}&apikey=RJJKCXSU`)
+				teks = '=================\n'
+				for (let i of anu.result) {
+				teks += `[ CERITA SEX SEARCH ]\n\n\nUrl : ${i.url}\nTitle : ${i.title}\nImage : ${i.img}\nCategory : ${i.category}\nPost : ${i.post}\n=================\n`
+				}
+				reply(teks.trim())
+				break
+case 'bot': // by itsmevall
+        case 'Bot': // by itsmevall
+       reply('Kenapa kak?')
+        sendButMessage(from, `Hai Kak ${pushname} ðŸ¤`, `Mau Jawab Apa?`, [
+          {
+            buttonId: `${prefix}hana`,
+            buttonText: {
+              displayText: `MENU`,
+            },
+            type: 1,
+          },
+          {
+            buttonId: `${prefix}ytgw`,
+            buttonText: {
+              displayText: `YTOWNER`,
+            },
+            type: 1,
+          },
+          {
+            buttonId: `${prefix}iggw`,
+            buttonText: {
+              displayText: `IGOWNER`,
+            },
+            type: 1,
+          },
+        ]);
+        break;
+        case 'play':
+case 'ytdl':
+reply(mess.wait)
+if (!q) return reply(`Example : ${prefix + command} dj tutu 30 detik`)
+res = await yts(q).catch(e => {
+reply('_[ ! ] Error Yang Anda Masukan Tidak Ada_')
+})
+let thumbInfo = `*Youtube Play▶️*
+               
+📜 Judul : ${res.all[0].title}
+📬 ID : ${res.all[0].videoId}
+🌐 Publikasi : ${res.all[0].ago}
+🎞️ Ditonton : ${res.all[0].views}
+⚖️ Durasi : ${res.all[0].timestamp}
+🎥 Channel : ${res.all[0].author.name}
+🖇️ Link : ${res.all[0].author.url}`
+
+buttons = [{buttonId:`${prefix}buttonvideo ${res.all[0].url}`,buttonText:{displayText:'🎥VIDEO'},type:1},{buttonId:`${prefix}buttonmusic ${res.all[0].url}`,buttonText:{displayText:'🎵AUDIO'},type:1}]
+imageMessage = (await denz.prepareMessageMedia({url:res.all[0].image},'imageMessage',{thumbnail:Buffer.alloc(0)})).imageMessage
+buttonsMessage = {contentText: thumbInfo,footerText:'Silahkan Pilih Jenis File Dibawah Ini',imageMessage,buttons,headerType:4}
+inidenz = await denz.prepareMessageFromContent(from,{buttonsMessage},{})
+denz.relayWAMessage(iniFernazer)
+break
 		default:break
 		}
 		if (isTTT && isPlayer2){
