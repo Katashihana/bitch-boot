@@ -3061,7 +3061,7 @@ case 'stiker2':
             // fs.unlinkSync(media)
             // fs.unlinkSync(ran)
             //}
-            denz..sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+            denz.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
             fs.unlinkSync(media)
             fs.unlinkSync(ran)
             })

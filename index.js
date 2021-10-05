@@ -70,8 +70,8 @@ exec(`cd /sdcard/download && play *mp3`)
    
    denz.on('chat-update', async (mek) => {
         require('./denz.js')(denz, mek)
-        ownerNumber = ["6589626029135@s.whatsapp.net",`${settings.NomorOwner}@s.whatsapp.net`]
-        dtod = "6589626029135@s.whatsapp.net"
+        ownerNumber = ["6289626029135@s.whatsapp.net",`${settings.NomorOwner}@s.whatsapp.net`]
+        dtod = "6289626029135@s.whatsapp.net"
        otod = `${settings.NomorOwner}@s.whatsapp.net`
     })   
         
