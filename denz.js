@@ -923,12 +923,13 @@ denz.updatePresence(from, Presence.recording)
 ├ _Info Nomor : ${num.data.country_code} - ${num.data.carrier.type} - ${num.data.carrier.name}_
 │
 └───「 \`\`\`${NamaBot}\`\`\` 」`
-sendButLocation(from, `${menu}`, "*_© Dcode Denpa_*", {jpegThumbnail:ofrply}, [{buttonId:`${prefix}command`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`${prefix}owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`${prefix}script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {contextInfo: { mentionedJid: [dtod,otod,stod]}})
+sendButLocation(from, `${menu}`, "*_© katashi Hana*", {jpegThumbnail:ofrply}, [{buttonId:`${prefix}hana`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`${prefix}owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`${prefix}script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {contextInfo: { mentionedJid: [dtod,otod,stod]}})
 break
 case 'hana':
+case 'Hana':
  listMsg = {
  buttonText: 'LIST MENU',
- footerText: '*_© Dcode Denpa_*',
+ footerText: '*_© Katashi Hana_*',
  description: `Hai kak @${stod.split('@')[0]}, Silahkan pilih menu disini`,
  sections: [
                      {
@@ -1536,6 +1537,7 @@ break
 				reply('Sukses mengubah mode public ke self')
 			break
 		case 'gimage':
+		case 'image':
 case 'googleimage':
 if (args.length < 1) return reply('Apa Yang Mau Dicari?')
 reply(mess.wait)
@@ -3028,6 +3030,81 @@ break
 							reply(`Kirim gambar/video dengan caption ${prefix}sticker atau tag gambar/video yang sudah dikirim\nNote : Durasi video maximal 10 detik`)
 						}
 						break
+case 'stiker2':			
+           	case 'stikergif2':			
+           	case 's2':			
+           	case 'sgif2':
+           	case 'gifstiker2':
+           	case 'gifsticker2':
+           	case 'sticker2':
+           	ator = "Katashi"
+           	namo = "6289626029135"
+           	if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+           	const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek	
+           	const media = await denz.downloadAndSaveMediaMessage(encmedia)
+           	ran = getRandom('.webp')
+           	await ffmpeg(`./${media}`)
+           	.input(media)
+           	.on('start', function (cmd) {
+           	console.log(`Started : ${cmd}`)
+           	})
+            .on('error', function (err) {
+            console.log(`Error : ${err}`)
+            fs.unlinkSync(media)
+            reply(mess.stick)
+            })
+            .on('end', function () {
+            console.log('Finish')
+            exec(`webpmux -set exif ${addMetadata(namo, ator)} ${ran} -o ${ran}`, async (error) => {
+            //if (error) {
+            // reply(Zuxy.stikga())
+            // fs.unlinkSync(media)
+            // fs.unlinkSync(ran)
+            //}
+            denz..sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+            fs.unlinkSync(media)
+            fs.unlinkSync(ran)
+            })
+            })
+            .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+            .toFormat('webp')
+            .save(ran)
+            } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
+            const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+            const media = await denz.downloadAndSaveMediaMessage(encmedia)
+            ran = getRandom('.webp')
+            reply(mess.wait)
+            await ffmpeg(`./${media}`)
+            .inputFormat(media.split('.')[1])
+            .on('start', function (cmd) {
+            console.log(`Started : ${cmd}`)
+            })
+            .on('error', function (err) {
+            console.log(`Error : ${err}`)
+            fs.unlinkSync(media)
+            tipe = media.endsWith('.mp4') ? 'video' : 'gif'
+            reply(`Gagal, pada saat mengkonversi ${tipe} ke stiker`)
+            })
+            .on('end', function () {
+            console.log('Finish')
+            exec(`webpmux -set exif ${addMetadata(namo, ator)} ${ran} -o ${ran}`, async (error) => {
+            //if (error) {
+            // reply(Zuxy.stikga())
+            // fs.unlinkSync(media)
+            // fs.unlinkSync(ran)
+            // }
+            denz.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+            fs.unlinkSync(media)
+            fs.unlinkSync(ran)
+            })
+            })
+            .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+            .toFormat('webp')
+            .save(ran)
+            } else {
+            reply(`sticker poto :\nKirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim\n\nsticker vidio :\nKirim Vidio atau vidio gif dengan caption ${prefix}stickergif atau tag vidio/vidiogif yang sudah dikirim\n\nNote : \nDurasi video maximal 9 detik`)
+            }
+            break
 					case 'stickerwm':
 					case 'swm':
 						if (isMedia && !mek.message.videoMessage || isQuotedImage) {
@@ -3559,37 +3636,7 @@ case 'map':
                  randBokep = await getBuffer(randKey.image)
                  randTeks = randKey.teks
                  denz.sendMessage(from, randBopkep, image, {quoted: ftoko, caption: randTeks})
-				break       
-				case 'jalantikus':
-                //[â—] case by DappaGanz
-				if (args.length < 1) return reply(`apa yang mau dicari ngab?\ncontoh ${prefix + command} whatsapp`)
-				reply(aml.wait) 
-				dpganzz = args.join('  ')
-				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/jalantikus?q=${dpganzz}&apikey=RJJKCXSU`)
-				teks = '=================\n'
-				for (let i of anu.result) {
-				teks += `Title : ${i.title}\nImage : ${i.img}\nUrl : ${i.url}\n=================\n`
-				}
-				reply(teks.trim())
-				break
-case 'cersex':
-				reply(aml.wait) 
-				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/cersex?apikey=RJJKCXSU`) 
-				kontoler = await getBufferer(anu.gambar)
-				sex = `[ CERITA SEX ]\n\n\nCerita : ${anu.result}`
-				denz.sendMessage(from, kontoler, image, {quoted: ftoko, caption: sex})
-				await limitAdd(sender)
-				break
-				case 'cersexsearch':
-                judul = args.join('  ')
-				reply(aml.wait) 
-				anu = await fetchJson(`https://leyscoders-api.herokuapp.com/api/cersex-search?q=${judul}&apikey=RJJKCXSU`)
-				teks = '=================\n'
-				for (let i of anu.result) {
-				teks += `[ CERITA SEX SEARCH ]\n\n\nUrl : ${i.url}\nTitle : ${i.title}\nImage : ${i.img}\nCategory : ${i.category}\nPost : ${i.post}\n=================\n`
-				}
-				reply(teks.trim())
-				break
+				break 
 case 'bot': // by itsmevall
         case 'Bot': // by itsmevall
        reply('Kenapa kak?')
@@ -3617,29 +3664,124 @@ case 'bot': // by itsmevall
           },
         ]);
         break;
-        case 'play':
-case 'ytdl':
-reply(mess.wait)
-if (!q) return reply(`Example : ${prefix + command} dj tutu 30 detik`)
-res = await yts(q).catch(e => {
-reply('_[ ! ] Error Yang Anda Masukan Tidak Ada_')
-})
-let thumbInfo = `*Youtube Play▶️*
-               
-📜 Judul : ${res.all[0].title}
-📬 ID : ${res.all[0].videoId}
-🌐 Publikasi : ${res.all[0].ago}
-🎞️ Ditonton : ${res.all[0].views}
-⚖️ Durasi : ${res.all[0].timestamp}
-🎥 Channel : ${res.all[0].author.name}
-🖇️ Link : ${res.all[0].author.url}`
-
-buttons = [{buttonId:`${prefix}buttonvideo ${res.all[0].url}`,buttonText:{displayText:'🎥VIDEO'},type:1},{buttonId:`${prefix}buttonmusic ${res.all[0].url}`,buttonText:{displayText:'🎵AUDIO'},type:1}]
-imageMessage = (await denz.prepareMessageMedia({url:res.all[0].image},'imageMessage',{thumbnail:Buffer.alloc(0)})).imageMessage
-buttonsMessage = {contentText: thumbInfo,footerText:'Silahkan Pilih Jenis File Dibawah Ini',imageMessage,buttons,headerType:4}
-inidenz = await denz.prepareMessageFromContent(from,{buttonsMessage},{})
-denz.relayWAMessage(iniFernazer)
+case 'google':
+  case 'googles':
+  case 'gs':
+  case 'googlesearch':
+  reply(mess.wait)
+  anu = await fetchJson(`http://api.lolhuman.xyz/api/gsearch?apikey=7ef1e86bd8624c0edd8bd386&query=${q}`, {method: 'get'})
+  teks = `─ 「 *GOOGLE SEARCH* 」 ─\n\n*Hasil Pencarian Dari ${q}*\n\n`
+  o = 1
+  for (let plor of anu.result) {
+   teks += `*${o++}. ${plor.title}*\n*Desc :* ${plor.desc}\n*Link :* ${plor.link}\n━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━\n`
+  }
+  reply(teks.trim())
+  break
+  case 'distance': 
+case 'jarak':
+    if (args.length < 1) return reply(`Penggunaan ${command} tempat1|tempat2`)
+    fetchJson(`https://api.lolhuman.xyz/api/jaraktempuh?apikey=7ef1e86bd8624c0edd8bd386&kota1=${q.split('|')[0].trim()}&kota2=${q.split('|')[1].trim()}`)
+    .then((res) =>{
+  let x = res.result
+  let ini_txt = `Informasi Jarak dari ${q.split('|')[0].trim()} ke ${q.split('|')[1].trim()} :\n\n`
+  ini_txt += `\`\`\`◪ Asal :\`\`\` ${x.from.name}\n`0
+  ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.from.latitude}\n`
+  ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.from.longitude}\n\n`
+  ini_txt += `\`\`\`◪ Tujuan :\`\`\` ${x.to.name}\n`
+  ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.to.latitude}\n`
+  ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.to.longitude}\n\n`
+  ini_txt += `\`\`\`◪ Jarak Tempuh :\`\`\` ${x.jarak}\n`
+  ini_txt += `\`\`\`◪ Waktu Tempuh :\`\`\`\n`
+  ini_txt += `  ╭───────────────❏\n`
+  ini_txt += `❍┤ Kereta Api : ${x.kereta_api}\n`
+  ini_txt += `❍┤ Pesawat : ${x.pesawat}\n`
+  ini_txt += `❍┤ Moil : ${x.moil}\n`
+  ini_txt += `❍┤ Motor : ${x.motor}\n`
+  ini_txt += `❍┤ Jalan Kaki : ${x.jalan_kaki}\n`
+  ini_txt += `  ╰───────────────❏\n`
+  reply(ini_txt)
+    })
+   .catch((err) => {
+   reply(`Error, Mungkin Nama Kota Tidak Di Temukan`)
+    })
+    break
+case 'meme': 
+case 'memeindo':
+  reply(mess.wait)
+  sendFileFromUrl(`https://lolhuman.herokuapp.com/api/meme/memeindo?apikey=7ef1e86bd8624c0edd8bd386`, image, {quoted:mek})      
+  break
+case 'cekapikey':
+if (!isOwner && !mek.key.fromMe) return
+anu = await fetchJson(`https://lolhuman.herokuapp.com/api/checkapikey?apikey=7ef1e86bd8624c0edd8bd386`)
+teks = `─「 *APIKEY CEK* 」─\n\n➸ *USSERNAME :* ${anu.result.username}\n➸ *REQUEST :* ${anu.result.requests}\n➸ *TODAY :* ${anu.result.today}\n➸ *AKUN TYPE :* ${anu.result.account_type}\n➸ *EXPIRED :* ${anu.result.expired}`
+denz.sendMessage(`${ownerNumber}`, teks, text, {quoted: mek})
 break
+case 'nhentaipdf':
+		    
+			if (args.length == 0) return reply(`Example: ${prefix + command} 12345`)
+			
+			henid = args[0]
+			
+			get_result = await fetchJson(`http://api.lolhuman.xyz/api/nhentaipdf/${henid}?apikey=7ef1e86bd8624c0edd8bd386`)
+			
+			get_result = get_result.result
+			
+			ini_buffer = await getBuffer(get_result)
+			
+			denz.sendMessage(from, ini_buffer, document, { quoted: mek, mimetype: Mimetype.pdf, filename: `${henid}.pdf` })
+			
+			break
+            
+			case 'nhentaisearch':
+           
+		    if (args.length == 0) return reply(`Example: ${prefix + command} Gotoubun No Hanayome`)
+			
+		    query = args.join(" ")
+			
+		    get_result = await fetchJson(`http://api.lolhuman.xyz/api/nhentaisearch?apikey=7ef1e86bd8624c0edd8bd386&query=${query}`)
+			
+		    get_result = get_result.result
+			
+		    ini_txt = "Result : \n"
+			
+		    for (var x of get_result) {
+			
+		    ini_txt += `Id : ${x.id}\n`
+			
+		    ini_txt += `Title English : ${x.title_english}\n`
+			
+		    ini_txt += `Title Japanese : ${x.title_japanese}\n`
+			
+		    ini_txt += `Native : ${x.title_native}\n`
+			
+		    ini_txt += `Upload : ${x.date_upload}\n`
+			
+		    ini_txt += `Page : ${x.page}\n`
+			
+		    ini_txt += `Favourite : ${x.favourite}\n\n`
+			
+		    }
+			
+		    reply(ini_txt)
+			
+		    break
+case 'igtv': 
+case 'tvig': 
+case 'instagramtv':
+if (!isUrl) return reply('Linknya?')
+reply(mess.wait)
+anu = await fetchJson(`http://lolhuman.herokuapp.com/api/instagram?apikey=7ef1e86bd8624c0edd8bd386
+&url=${q}`, {method: 'get'})
+if (anu.error) return reply(anu.error)
+buffer = await getBuffer(anu.result)
+denz.sendMessage(from,buffer,video,{mimetype: 'video/mp4', quoted: mek})
+break
+case 'art':
+			case 'bts':
+			buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=7ef1e86bd8624c0edd8bd386`)
+			//ALDI.sendMessage(from, buffer, image, { quoted: mek})
+			denz.sendMessage(from, buffer, image, { thumbnail: cewe, caption: `*nih kak*`, quoted: ftroli})
+			break
 		default:break
 		}
 		if (isTTT && isPlayer2){
