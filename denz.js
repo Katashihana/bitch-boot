@@ -3677,34 +3677,6 @@ case 'google':
   }
   reply(teks.trim())
   break
-  case 'distance': 
-case 'jarak':
-    if (args.length < 1) return reply(`Penggunaan ${command} tempat1|tempat2`)
-    fetchJson(`https://api.lolhuman.xyz/api/jaraktempuh?apikey=7ef1e86bd8624c0edd8bd386&kota1=${q.split('|')[0].trim()}&kota2=${q.split('|')[1].trim()}`)
-    .then((res) =>{
-  let x = res.result
-  let ini_txt = `Informasi Jarak dari ${q.split('|')[0].trim()} ke ${q.split('|')[1].trim()} :\n\n`
-  ini_txt += `\`\`\`◪ Asal :\`\`\` ${x.from.name}\n`0
-  ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.from.latitude}\n`
-  ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.from.longitude}\n\n`
-  ini_txt += `\`\`\`◪ Tujuan :\`\`\` ${x.to.name}\n`
-  ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.to.latitude}\n`
-  ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.to.longitude}\n\n`
-  ini_txt += `\`\`\`◪ Jarak Tempuh :\`\`\` ${x.jarak}\n`
-  ini_txt += `\`\`\`◪ Waktu Tempuh :\`\`\`\n`
-  ini_txt += `  ╭───────────────❏\n`
-  ini_txt += `❍┤ Kereta Api : ${x.kereta_api}\n`
-  ini_txt += `❍┤ Pesawat : ${x.pesawat}\n`
-  ini_txt += `❍┤ Moil : ${x.moil}\n`
-  ini_txt += `❍┤ Motor : ${x.motor}\n`
-  ini_txt += `❍┤ Jalan Kaki : ${x.jalan_kaki}\n`
-  ini_txt += `  ╰───────────────❏\n`
-  reply(ini_txt)
-    })
-   .catch((err) => {
-   reply(`Error, Mungkin Nama Kota Tidak Di Temukan`)
-    })
-    break
 case 'meme': 
 case 'memeindo':
   reply(mess.wait)
