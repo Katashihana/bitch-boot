@@ -3737,6 +3737,171 @@ case 'nhentaipdf':
 		    reply(ini_txt)
 			
 		    break
+case 'listsurah':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/quran?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = 'List Surah:\n'
+                    for (var x in get_result) {
+                        ini_txt += `${x}. ${get_result[x]}\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'alquran':
+                    if (args.length < 1) return reply(`Example: ${prefix + command} 18 or ${prefix + command} 18/10 or ${prefix + command} 18/1-10`)
+                    urls = `https://api.lolhuman.xyz/api/quran/${args[0]}?apikey=7ef1e86bd8624c0edd8bd386`
+                    quran = await fetchJson(urls)
+                    result = quran.result
+                    ayat = result.ayat
+                    ini_txt = `QS. ${result.surah} : 1-${ayat.length}\n\n`
+                    for (var x of ayat) {
+                        arab = x.arab
+                        nomor = x.ayat
+                        latin = x.latin
+                        indo = x.indonesia
+                        ini_txt += `${arab}\n${nomor}. ${latin}\n${indo}\n\n`
+                    }
+                    ini_txt = ini_txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
+                    ini_txt = ini_txt.replace(/<strong>/g, "").replace(/<\/strong>/g, "")
+                    ini_txt = ini_txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
+                    reply(ini_txt)
+                    break
+                case 'alquranaudio':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} 18 or ${prefix + command} 18/10`)
+                    surah = args[0]
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/quran/audio/${surah}?apikey=7ef1e86bd8624c0edd8bd386`)
+                    await lolhuman.sendMessage(from, ini_buffer, audio, { quoted: lol, mimetype: Mimetype.mp4Audio })
+                    break
+                case 'asmaulhusna':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/asmaulhusna?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `No : ${get_result.index}\n`
+                    ini_txt += `Latin: ${get_result.latin}\n`
+                    ini_txt += `Arab : ${get_result.ar}\n`
+                    ini_txt += `Indonesia : ${get_result.id}\n`
+                    ini_txt += `English : ${get_result.en}`
+                    reply(ini_txt)
+                    break
+                case 'kisahnabi':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Muhammad`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/kisahnabi/${query}?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `Name : ${get_result.name}\n`
+                    ini_txt += `Lahir : ${get_result.thn_kelahiran}\n`
+                    ini_txt += `Umur : ${get_result.age}\n`
+                    ini_txt += `Tempat : ${get_result.place}\n`
+                    ini_txt += `Story : \n${get_result.story}`
+                    reply(ini_txt)
+                    break
+                case 'jadwalsholat':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Yogyakarta`)
+                    daerah = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/sholat/${daerah}?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `Wilayah : ${get_result.wilayah}\n`
+                    ini_txt += `Tanggal : ${get_result.tanggal}\n`
+                    ini_txt += `Sahur : ${get_result.sahur}\n`
+                    ini_txt += `Imsak : ${get_result.imsak}\n`
+                    ini_txt += `Subuh : ${get_result.subuh}\n`
+                    ini_txt += `Terbit : ${get_result.terbit}\n`
+                    ini_txt += `Dhuha : ${get_result.dhuha}\n`
+                    ini_txt += `Dzuhur : ${get_result.dzuhur}\n`
+                    ini_txt += `Ashar : ${get_result.ashar}\n`
+                    ini_txt += `Maghrib : ${get_result.imsak}\n`
+                    ini_txt += `Isya : ${get_result.isya}`
+                    reply(ini_txt)
+                    break
+case 'zippyshare':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} https://www51.zippyshare.com/v/5W0TOBz1/file.html`)
+                    ini_url = args[0]
+                    ini_url = await fetchJson(`https://api.lolhuman.xyz/api/zippyshare?apikey=7ef1e86bd8624c0edd8bd386&url=${ini_url}`)
+                    ini_url = ini_url.result
+                    ini_txt = `File Name : ${ini_url.name_file}\n`
+                    ini_txt += `Size : ${ini_url.size}\n`
+                    ini_txt += `Date Upload : ${ini_url.date_upload}\n`
+                    ini_txt += `Download Url : ${ini_url.download_url}`
+                    reply(ini_txt)
+                    break
+case 'pixiv':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} loli kawaii`)
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/pixiv?apikey=7ef1e86bd8624c0edd8bd386&query=${query}`)
+                    await denz.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    break
+                case 'pixivdl':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} 63456028`)
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/pixivdl/${pixivid}?apikey=7ef1e86bd8624c0edd8bd386`)
+                    await denz.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    break
+                case 'xhamstersearch':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Japanese`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/xhamstersearch?apikey=7ef1e86bd8624c0edd8bd386&query=${query}`)
+                    get_result = get_result.result
+                    ini_txt = ""
+                    for (var x of get_result) {
+                        ini_txt += `Title : ${x.title}\n`
+                        ini_txt += `Views : ${x.views}\n`
+                        ini_txt += `Duration : ${x.duration}\n`
+                        ini_txt += `Link : ${x.link}\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'xhamster':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} https://xhamster.com/videos/party-with-friends-end-in-awesome-fucking-5798407`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/xhamster?apikey=7ef1e86bd8624c0edd8bd386&url=${query}`)
+                    get_result = get_result.result
+                    ini_txt = `Title : ${get_result.title}\n`
+                    ini_txt += `Duration : ${get_result.duration}\n`
+                    ini_txt += `Uploader : ${get_result.author}\n`
+                    ini_txt += `Upload : ${get_result.upload}\n`
+                    ini_txt += `View : ${get_result.views}\n`
+                    ini_txt += `Rating : ${get_result.rating}\n`
+                    ini_txt += `Like : ${get_result.likes}\n`
+                    ini_txt += `Dislike : ${get_result.dislikes}\n`
+                    ini_txt += `Comment : ${get_result.comments}\n`
+                    ini_txt += "Link : \n"
+                    link = get_result.link
+                    for (var x of link) {
+                        ini_txt += `${x.type} - ${x.link}\n\n`
+                    }
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    await denz.sendMessage(from, thumbnail, image, { quoted: lol, caption: ini_txt })
+                    break
+                case 'xnxxsearch':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Japanese`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/xnxxsearch?apikey=7ef1e86bd8624c0edd8bd386&query=${query}`)
+                    get_result = get_result.result
+                    ini_txt = ""
+                    for (var x of get_result) {
+                        ini_txt += `Title : ${x.title}\n`
+                        ini_txt += `Views : ${x.views}\n`
+                        ini_txt += `Duration : ${x.duration}\n`
+                        ini_txt += `Uploader : ${x.uploader}\n`
+                        ini_txt += `Link : ${x.link}\n`
+                        ini_txt += `Thumbnail : ${x.thumbnail}\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'xnxx':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} https://www.xnxx.com/video-uy5a73b/mom_is_horny_-_brooklyn`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/xnxx?apikey=7ef1e86bd8624c0edd8bd386&url=${query}`)
+                    get_result = get_result.result
+                    ini_txt = `Title : ${get_result.title}\n`
+                    ini_txt += `Duration : ${get_result.duration}\n`
+                    ini_txt += `View : ${get_result.view}\n`
+                    ini_txt += `Rating : ${get_result.rating}\n`
+                    ini_txt += `Like : ${get_result.like}\n`
+                    ini_txt += `Dislike : ${get_result.dislike}\n`
+                    ini_txt += `Comment : ${get_result.comment}\n`
+                    ini_txt += `Tag : ${get_result.tag.join(", ")}\n`
+                    ini_txt += `Description : ${get_result.description}\n`
+                    ini_txt += "Link : \n"
+                    ini_link = get_result.link
+                    for (var x of ini_link) {
+                        ini_txt += `${x.type} - ${x.link}\n\n`
+                    }
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    await denz.sendMessage(from, thumbnail, image, { quoted: lol, caption: ini_txt })
+                    break
 case 'igtv': 
 case 'tvig': 
 case 'instagramtv':
@@ -3748,6 +3913,102 @@ if (anu.error) return reply(anu.error)
 buffer = await getBuffer(anu.result)
 denz.sendMessage(from,buffer,video,{mimetype: 'video/mp4', quoted: mek})
 break
+case 'spamsms':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} 08303030303030`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam1?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam2?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam3?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam4?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam5?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam6?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam7?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/sms/spam8?apikey=7ef1e86bd8624c0edd8bd386&nomor=${nomor}`)
+                    reply("Success")
+                    break
+case 'covidindo':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/corona/indonesia?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `Positif : ${get_result.positif}\n`
+                    ini_txt += `Sembuh : ${get_result.sembuh}\n`
+                    ini_txt += `Dirawat : ${get_result.dirawat}\n`
+                    ini_txt += `Meninggal : ${get_result.meninggal}`
+                    reply(ini_txt)
+                    break
+                case 'covidglobal':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/corona/global?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `Positif : ${get_result.positif}\n`
+                    ini_txt += `Sembuh : ${get_result.sembuh}\n`
+                    ini_txt += `Dirawat : ${get_result.dirawat}\n`
+                    ini_txt += `Meninggal : ${get_result.meninggal}`
+                    reply(ini_txt)
+                    break
+                case 'kodepos':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Slemanan or ${prefix + command} 66154`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/kodepos?apikey=7ef1e86bd8624c0edd8bd386&query=${daerah}`)
+                    get_result = get_result.result[0]
+                    ini_txt = `Provinsi : ${get_result.province}\n`
+                    ini_txt += `Kabupaten : ${get_result.city}\n`
+                    ini_txt += `Kecamatan : ${get_result.subdistrict}\n`
+                    ini_txt += `Kelurahan : ${get_result.urban}\n`
+                    ini_txt += `Kode Pos : ${get_result.postalcode}`
+                    reply(ini_txt)
+                    break
+                case 'jadwalbola':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/jadwalbola?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = "Jadwal Bola :\n"
+                    for (var x of get_result) {
+                        ini_txt += `Hari : ${x.hari}\n`
+                        ini_txt += `Jam : ${x.jam}\n`
+                        ini_txt += `Event : ${x.event}\n`
+                        ini_txt += `Match : ${x.match}\n`
+                        ini_txt += `TV : ${x.tv}\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'indbeasiswa':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/indbeasiswa?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = 'Info Beasiswa :\n'
+                    for (var x of get_result) {
+                        ini_txt += `Title : ${x.title}\n`
+                        ini_txt += `Link : ${x.link}\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'hoax':
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/turnbackhoax?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = 'Info Hoax :\n'
+                    for (var x of get_result) {
+                        ini_txt += `Title : ${x.title}\n`
+                        ini_txt += `Link : ${x.link}\n`
+                        ini_txt += `Posted : ${x.posted}\n`
+                        ini_txt += `Description : ${x.desc}\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+case 'genshin':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} jean`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/genshin/${hero}?apikey=7ef1e86bd8624c0edd8bd386`)
+                    get_result = get_result.result
+                    ini_txt = `Name : ${get_result.title}\n`
+                    ini_txt += `Intro : ${get_result.intro}\n`
+                    ini_txt += `Icon : ${get_result.icon}\n`
+                    ini_icon = await getBuffer(get_result.cover1)
+                    await denz.sendMessage(from, ini_icon, image, { quoted: lol, caption: ini_txt })
+                    ini_voice = await getBuffer(get_result.cv[0].audio[0])
+                    await denz.sendMessage(from, ini_voice, audio, { quoted: lol, mimetype: Mimetype.mp4Audio })
+                    break
+case 'chord':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Melukis senja`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/chord?apikey=7ef1e86bd8624c0edd8bd386&query=${query}`)
+                    get_result = get_result.result
+                    ini_txt = `Title : ${get_result.title}\n`
+                    ini_txt += `Chord : \n${get_result.chord}`
+                    reply(ini_txt)
+                    break
 case 'art':
 			case 'bts':
 			buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=7ef1e86bd8624c0edd8bd386`)
